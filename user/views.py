@@ -5,8 +5,8 @@ from django.http        import JsonResponse
 
 class HelloView1(View):
     def get(self, request):
-        return JsonResponse({'message' : '승훈님 기대하겠습니다.'})
+        return JsonResponse({'message' : 'Your success is up to your efforts. 👍'})
 
 class HelloView2(View):
     def get(self, request):
-        return JsonResponse({'message' : '민기님 화이팅!'})
+        return JsonResponse({'message' : 'The road to success and the road to failure are almost exactly the same. 👍'})
