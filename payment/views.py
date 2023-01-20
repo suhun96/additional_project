@@ -4,6 +4,7 @@ from iamport    import Iamport
 from my_settings import *
 from django.http import *
 import requests, json , uuid
+from payment.models import *
 
 class PaymentInfoResisterView(View):
     def get(self, request):
@@ -61,3 +62,42 @@ class GetMerchantUuidView(View):
     def get(self, request):
         new_uuid = uuid.uuid4()
         return JsonResponse({'message' : new_uuid})
+
+class PaymentInquireView(View):
+    def post(self, request):
+        data = request.POST
+        token = data['token']
+        imp_uid = data['imp_uid']
+        merchant_uid = data['merchant_uid']
+
+        url =  f"https://api.iamport.kr/payments/find/{imp_uid}"
+        headers = {'Authorization' : token}
+
+        req = requests.post(url, headers= headers)
+        res = req.json()
+
+        if res['code'] == 0:
+            context = {
+                'imp_id' : res['response']['imp_uid'],
+                'merchant_order' : res['response']['merchant_uid'],
+                'amount' : res['response']['amount'],
+                'status' : res['response']['status'],
+                'pay_method'  : res['response']['pay_method'],
+                'receipt_url' : res['response']['receipt_url']
+            }
+
+            return JsonResponse({'message' : context})
+        else:
+            return JsonResponse({'message' : '실패'})
+
+
+        # # 야무진 서버에 complete 정보 저장
+        # new_success = ImportSuccess.objects.create(
+        #     imp_uid = imp_uid,
+        #     merchant_uid = merchant_uid
+        # )
+
+
+
+
+
