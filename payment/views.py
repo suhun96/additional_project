@@ -25,7 +25,7 @@ class PaymentInfoCheckView(View):
         mid = 'merchant_test'
         amount = 12000
         try:
-            response = yamuzin_iamport.prepare_validate(amount= amount, merchant_uid= mid)
+            response = yamuzin_iamport.prepare_validate(merchant_uid= mid, amount = amount)
             
             return JsonResponse({'message' : response})        
         except Iamport.ResponseError as e:
@@ -67,15 +67,15 @@ class PaymentInquireView(View):
     def post(self, request):
         data = request.POST
         token = data['token']
-        imp_uid = data['imp_uid']
+        # imp_uid = data['imp_uid']
         merchant_uid = data['merchant_uid']
 
-        url =  f"https://api.iamport.kr/payments/find/{imp_uid}"
+        url =  f"https://api.iamport.kr/payments/find/{merchant_uid}"
         headers = {'Authorization' : token}
 
         req = requests.post(url, headers= headers)
         res = req.json()
-
+        print(res)
         if res['code'] == 0:
             context = {
                 'imp_id' : res['response']['imp_uid'],
@@ -87,8 +87,10 @@ class PaymentInquireView(View):
             }
 
             return JsonResponse({'message' : context})
-        else:
-            return JsonResponse({'message' : '실패'})
+        if res['code'] == -1:
+            message = res['message']
+            print(message)
+            return JsonResponse({'message' : message})
 
 
         # # 야무진 서버에 complete 정보 저장

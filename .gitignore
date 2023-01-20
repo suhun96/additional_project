@@ -666,3 +666,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudio,vim,macos,linux,zsh
 
 my_settings.py
+nohup.out

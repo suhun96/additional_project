@@ -7,5 +7,5 @@ urlpatterns = [
     path('check',PaymentInfoCheckView.as_view()),
     path('token',GetAcessTokenView.as_view()),
     path('merchant-uid',GetMerchantUuidView.as_view()),
-    path('transaction',PaymentInfoCheckView.as_view())
+    path('transaction',PaymentInquireView.as_view())
 ]
