@@ -92,13 +92,6 @@ class PaymentInquireView(View):
             print(message)
             return JsonResponse({'message' : message})
 
-
-        # # 야무진 서버에 complete 정보 저장
-        # new_success = ImportSuccess.objects.create(
-        #     imp_uid = imp_uid,
-        #     merchant_uid = merchant_uid
-        # )
-
 class PaymentFindView(View):
     def get(self, request):
         imp_uid = request.GET.get('imp_uid')
@@ -113,5 +106,42 @@ class PaymentPayCheckView(View):
 
         return JsonResponse({'message' : response})
 
+class ImportPaymentView(View):
+    def post(self, request):
+        data = request.POST
+        print(data)
 
+        pay_load = data['pay_load']
+        imp_uid = data['imp_uid']
+        
+        # Step1. pay_load 저장
+        new_payload = ImportPayload.objects.create(
+            pg             = pay_load['pg'],     
+            pay_method     = pay_load['pay_method'],
+            merchant_uid   = pay_load['merchant_uid'],
+            name           = pay_load['name'],
+            amount         = pay_load['amount'],
+            buyer_email    = pay_load['buyer_email'],
+            buyer_name     = pay_load['buyer_name'],
+            buyer_tel      = pay_load['buyer_tel'],
+            buyer_postcode = pay_load['buyer_postcode'],
+        )
 
+        # Step2. pay_load 의 amount 와 pg서버에 등록된 금액 비교.
+        check_amount = new_payload.amount
+        is_paid = yamuzin_iamport.is_paid(amount= check_amount, imp_uid = imp_uid)
+
+        if not is_paid == True:
+            cancel_payment = yamuzin_iamport.cancel('금액 대조 불일치', imp_uid = imp_uid)
+            return JsonResponse({'message' : '거래가 취소 되었습니다.'}, status = 403)
+
+        # Step3. 성공한 결제 내역 DB에 저장.
+        ImportSuccess.objects.create(
+            imp_uid = imp_uid,
+            merchant_uid = new_payload.merchant_uid
+        )
+        
+        # Step4. 결제 내역 전송.
+        context = yamuzin_iamport.find(imp_uid= imp_uid)
+
+        return JsonResponse({'message' : '결제에 성공했습니다', '결제 내역' : context}, status = 200)

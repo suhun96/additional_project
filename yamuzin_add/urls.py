@@ -17,5 +17,6 @@ from django.urls    import path, include
 
 urlpatterns = [
     path('to/', include('user.urls')),
-    path('payment/', include('payment.urls'))
+    path('payment/', include('payment.urls')),
+    path('kakao/', include('user.urls2'))
 ]
