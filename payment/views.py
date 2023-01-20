@@ -99,7 +99,19 @@ class PaymentInquireView(View):
         #     merchant_uid = merchant_uid
         # )
 
+class PaymentFindView(View):
+    def get(self, request):
+        imp_uid = request.GET.get('imp_uid')
+        response = yamuzin_iamport.find(imp_uid= imp_uid)
 
+        return JsonResponse({'message' : response})
+
+class PaymentPayCheckView(View):
+    def get(self, request):
+        imp_uid = request.GET.get('imp_uid')
+        response = yamuzin_iamport.is_paid(100, imp_uid = imp_uid)
+
+        return JsonResponse({'message' : response})
 
 
 
