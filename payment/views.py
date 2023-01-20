@@ -3,7 +3,7 @@ from django.views import View
 from iamport    import Iamport
 from my_settings import *
 from django.http import *
-import requests, json
+import requests, json , uuid
 
 class PaymentInfoResisterView(View):
     def get(self, request):
@@ -51,9 +51,13 @@ class GetAcessTokenView(View):
             return None
 
     def get(self, request):
-        
         token = self.get_token()
         
         if token == None:
             return JsonResponse({'message' : 'error'}) 
         return JsonResponse({'message' : token})
+
+class GetMerchantUuidView(View):
+    def get(self, request):
+        new_uuid = uuid.uuid4()
+        return JsonResponse({'message' : new_uuid})
