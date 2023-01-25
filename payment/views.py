@@ -112,7 +112,9 @@ class ImportPaymentView(View):
         print(data)
 
         pay_load = data['pay_load']
+        print(pay_load)
         imp_uid = data['imp_uid']
+        print(imp_uid)
         
         # Step1. pay_load 저장
         new_payload = ImportPayload.objects.create(
