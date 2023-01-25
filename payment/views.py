@@ -111,22 +111,20 @@ class ImportPaymentView(View):
         data = request.POST
         print(data)
 
-        pay_load = data['pay_load']
-        print(pay_load)
         imp_uid = data['imp_uid']
         print(imp_uid)
         
         # Step1. pay_load 저장
         new_payload = ImportPayload.objects.create(
-            pg             = pay_load['pg'],     
-            pay_method     = pay_load['pay_method'],
-            merchant_uid   = pay_load['merchant_uid'],
-            name           = pay_load['name'],
-            amount         = pay_load['amount'],
-            buyer_email    = pay_load['buyer_email'],
-            buyer_name     = pay_load['buyer_name'],
-            buyer_tel      = pay_load['buyer_tel'],
-            buyer_postcode = pay_load['buyer_postcode'],
+            pg             = data['pg'],     
+            pay_method     = data['pay_method'],
+            merchant_uid   = data['merchant_uid'],
+            name           = data['name'],
+            amount         = data['amount'],
+            buyer_email    = data['buyer_email'],
+            buyer_name     = data['buyer_name'],
+            buyer_tel      = data['buyer_tel'],
+            buyer_postcode = data['buyer_postcode'],
         )
 
         # Step2. pay_load 의 amount 와 pg서버에 등록된 금액 비교.
